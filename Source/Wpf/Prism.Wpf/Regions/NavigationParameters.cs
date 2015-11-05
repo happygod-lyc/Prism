@@ -1,5 +1,3 @@
-// Copyright (c) Microsoft Corporation. All rights reserved. See License.txt in the project root for license information.
-
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -7,6 +5,7 @@ using System.Text;
 
 namespace Prism.Regions
 {
+    //TODO: Once UWP and Xamarin.Forms navigation has been implemented and stablized, see if we can move this class to the core Prism assembly.  Right now each platform has it's own implementation
     /// <summary>
     /// Represents Navigation parameters.
     /// </summary>
@@ -17,7 +16,7 @@ namespace Prism.Regions
     {
         private readonly List<KeyValuePair<string, object>> entries = new List<KeyValuePair<string, object>>();
 
-                /// <summary>
+        /// <summary>
         /// Initializes a new instance of the <see cref="NavigationParameters"/> class.
         /// </summary>
         public NavigationParameters()
@@ -151,6 +150,5 @@ namespace Prism.Regions
             return queryBuilder.ToString();
 
         }
-
     }
 }

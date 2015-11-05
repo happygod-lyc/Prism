@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved. See License.txt in the project root for license information.
+
 
 using System;
 using Microsoft.Practices.Unity;
@@ -8,7 +8,6 @@ namespace Prism.Unity
     /// <summary>
     /// Extensions methods to extend and facilitate the usage of <see cref="IUnityContainer"/>.
     /// </summary>
-    [CLSCompliant(false)]
     public static class UnityContainerHelper
     {
         /// <summary>

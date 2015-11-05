@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved. See License.txt in the project root for license information.
+
 
 using System;
 using Microsoft.Practices.ObjectBuilder2;
@@ -9,7 +9,6 @@ namespace Prism.Unity
     /// <summary>
     /// Implements a <see cref="UnityContainerExtension"/> that checks if a specific type was registered with the container.
     /// </summary>
-    [CLSCompliant(false)]
     public class UnityBootstrapperExtension : UnityContainerExtension
     {
         /// <summary>
@@ -19,7 +18,7 @@ namespace Prism.Unity
         /// <param name="type">The type to check if it was registered.</param>
         /// <returns><see langword="true" /> if the <paramref name="type"/> was registered with the container.</returns>
         /// <remarks>
-        /// In order to use this extension, you must first call <see cref="UnityContainerExtensions.AddNewExtension{TExtension}"/> 
+        /// In order to use this extension, you must first call <see cref="UnityExtensions.AddNewExtension{TExtension}"/> 
         /// and specify <see cref="UnityContainerExtension"/> as the extension type.
         /// </remarks>
         public static bool IsTypeRegistered(IUnityContainer container, Type type)

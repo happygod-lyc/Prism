@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved. See License.txt in the project root for license information.
+
 
 using System;
 using System.ComponentModel;
@@ -47,11 +47,7 @@ namespace Prism.Mvvm
         /// that support <see cref="CallerMemberNameAttribute"/>.</param>
         protected virtual void OnPropertyChanged([CallerMemberName]string propertyName = null)
         {
-            var eventHandler = this.PropertyChanged;
-            if (eventHandler != null)
-            {
-                eventHandler(this, new PropertyChangedEventArgs(propertyName));
-            }
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         /// <summary>

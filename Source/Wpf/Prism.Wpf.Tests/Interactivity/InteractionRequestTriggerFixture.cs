@@ -1,10 +1,11 @@
-// Copyright (c) Microsoft Corporation. All rights reserved. See License.txt in the project root for license information.
+
 
 using System;
 using System.Windows;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Prism.Interactivity.InteractionRequest;
 using Prism.Wpf.Tests.Mocks;
+using System.Threading.Tasks;
 
 namespace Prism.Wpf.Tests.Interactivity
 {
@@ -48,73 +49,23 @@ namespace Prism.Wpf.Tests.Interactivity
         }
 
         [TestMethod]
-        public void WhenAssociatedObjectIsUnloaded_ShouldNotReactToEventBeingRaised()
+        public async Task WhenEventIsRaisedAsync_NotificationIsPassedBackAsync()
         {
-            InteractionRequest<INotification> request = new InteractionRequest<INotification>();
-            TestableInteractionRequestTrigger trigger = new TestableInteractionRequestTrigger();
-            MockFrameworkElement associatedObject = new MockFrameworkElement();
+            var request = new InteractionRequest<INotification>();
+            var trigger = new TestableInteractionRequestTrigger();
+            var associatedObject = new DependencyObject();
+            var action = new TestableTriggerAction();
+            var notification = new Notification();
 
+            trigger.Actions.Add(action);
             trigger.Attach(associatedObject);
             trigger.SourceObject = request;
 
-            Assert.IsTrue(trigger.ExecutionCount == 0);
+            Assert.IsTrue(action.ExecutionCount == 0);
 
-            request.Raise(new Notification());
-            Assert.IsTrue(trigger.ExecutionCount == 1);
-
-            associatedObject.RaiseUnloaded();
-            request.Raise(new Notification());
-            Assert.IsTrue(trigger.ExecutionCount == 1);
-
-            trigger.Detach();
-            request.Raise(new Notification());
-            Assert.IsTrue(trigger.ExecutionCount == 1);
-        }
-
-        [TestMethod]
-        public void WhenAssociatedObjectIsReloaded_ShouldReactToEventBeingRaisedAgain()
-        {
-            InteractionRequest<INotification> request = new InteractionRequest<INotification>();
-            TestableInteractionRequestTrigger trigger = new TestableInteractionRequestTrigger();
-            MockFrameworkElement associatedObject = new MockFrameworkElement();
-
-            trigger.Attach(associatedObject);
-            trigger.SourceObject = request;
-
-            Assert.IsTrue(trigger.ExecutionCount == 0);
-
-            request.Raise(new Notification());
-            Assert.IsTrue(trigger.ExecutionCount == 1);
-
-            associatedObject.RaiseUnloaded();
-            request.Raise(new Notification());
-            Assert.IsTrue(trigger.ExecutionCount == 1);
-
-            associatedObject.RaiseLoaded();
-            request.Raise(new Notification());
-            Assert.IsTrue(trigger.ExecutionCount == 2);
-        }
-
-        [TestMethod]
-        public void WhenAssociatedObjectIsUnloadedAndDiscarded_ShouldBeGarbageCollected()
-        {
-            InteractionRequest<INotification> request = new InteractionRequest<INotification>();
-            TestableInteractionRequestTrigger trigger = new TestableInteractionRequestTrigger();
-            MockFrameworkElement associatedObject = new MockFrameworkElement();
-
-            trigger.Attach(associatedObject);
-            trigger.SourceObject = request;
-
-            WeakReference weakTrigger = new WeakReference(trigger);
-            trigger = null;
-
-            GC.Collect();
-            Assert.IsTrue(weakTrigger.IsAlive);
-
-            associatedObject.RaiseUnloaded();
-            associatedObject = null;
-            GC.Collect();
-            Assert.IsFalse(weakTrigger.IsAlive);
+            var result = await request.RaiseAsync(notification);
+            Assert.IsTrue(action.ExecutionCount == 1);
+            Assert.ReferenceEquals(notification, result);
         }
     }
 
@@ -136,6 +87,10 @@ namespace Prism.Wpf.Tests.Interactivity
         protected override void Invoke(object parameter)
         {
             this.ExecutionCount++;
+            if (parameter is InteractionRequestedEventArgs)
+            {
+                ((InteractionRequestedEventArgs)parameter).Callback();
+            }
         }
     }
 }
